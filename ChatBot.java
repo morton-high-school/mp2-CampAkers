@@ -15,10 +15,28 @@ public class ChatBot{
   */
   public String getResponse(String statement){
     String response = "";
-    if(statement.indexOf("no")>=0){
+    String x = statement.trim();
+    if (x.length()==0){
+      response = "Please enter something into the ChatBot!";
+    }
+    else if(findKeyword(x, " no ", 0)>=0){
       response = "Why so negative?";
-    }else if(statement.indexOf("mother")>0 ||  statement.indexOf("father")>0 || statement.indexOf("sister")>0 || statement.indexOf("brother")>0){
+    }else if(findKeyword(x, "mother", 0)>=0 ||  findKeyword(x, "father", 0)>=0 || findKeyword(x, "sister", 0)>=0 || findKeyword(x, "brother", 0)>=0){
       response = "Tell me more about your family.";
+    }else if (findKeyword(x, "dog", 0)>=0 || findKeyword(x, "cat", 0)>=0){
+      response = "Tell me more about your pets.";
+    }else if(findKeyword(x, "Mr. Zeller", 0)>=0){
+      response = "Mr. Zeller?! I love that guy! He's so gracious and benevolent!";
+    }else if(findKeyword(x, "rain", 0)>=0){
+      response = "I love playing in the puddles when it rains!";
+    }else if(findKeyword(x, "sudoku", 0)>=0){
+      response = "Sudoku is really hard, but so enjoyable!";
+    }else if(findKeyword(x,"I want to",0)>=0){
+      response = transformIWantToStatement(x);
+    }else if(findKeyword(x,"you",0)>=0 && findKeyword(x,"me",(x.indexOf("you")+3))>=0){
+      response = transformYouMeStatement(x);
+    }else if(findKeyword(x,"I",0)>=0 && findKeyword(x,"you",(x.indexOf("I")+1))>=0){
+      response = transformIYouStatement(x);
     }else{
       response = getRandomResponse();
     }
@@ -30,7 +48,7 @@ public class ChatBot{
   * @return a non-commital string
   */
   private String getRandomResponse(){
-    int numberOfResponses = 4;
+    int numberOfResponses = 6;
     double r = Math.random();
     int whichResponse = (int)(r*numberOfResponses);
     String response = "";
@@ -43,6 +61,10 @@ public class ChatBot{
       response = "Do you really think so?";
     }else if(whichResponse==3){
       response = "You don't say.";
+    }else if(whichResponse==4){
+      response = "Wow!.";
+    }else if(whichResponse==5){
+      response = "That is curious.";
     }
     return response;
   }
@@ -143,5 +165,25 @@ public class ChatBot{
 
 		String restOfStatement = statement.substring(psnOfYou + 3, psnOfMe).trim();
 		return "What makes you think that I " + restOfStatement + " you?";
+	}
+
+
+
+
+
+
+  private String transformIYouStatement(String statement){
+		//  Remove the final period, if there is one
+		statement = statement.trim();
+		String lastChar = statement.substring(statement.length() - 1);
+		if (lastChar.equals(".")){
+			statement = statement.substring(0, statement.length() - 1);
+		}
+
+		int psnOfI = findKeyword (statement, "I", 0);
+		int psnOfYou1 = findKeyword (statement, "you", psnOfI + 1);
+
+		String restOfStatement = statement.substring(psnOfI + 1, psnOfYou1).trim();
+		return "Why do you " + restOfStatement + " me?";
 	}
 }
